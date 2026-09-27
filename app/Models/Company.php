@@ -142,7 +142,7 @@ class Company extends Authenticatable
     }
 
 
-    public function scopeSemantic(\Illuminate\Database\Eloquent\Builder $query, ?array $vector, float $maxDistance = 0.5): \Illuminate\Database\Eloquent\Builder
+    public function scopeSemantic(\Illuminate\Database\Eloquent\Builder $query, ?array $vector, float $maxDistance = 0.4): \Illuminate\Database\Eloquent\Builder
     {
         if (!$vector) {
             return $query;

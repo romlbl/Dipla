@@ -176,7 +176,7 @@ class Product extends Model
      * Filtre/trie par proximité vectorielle (sens du texte + de l'image).
      * $vector = null → ne touche pas à la requête.
      */
-    public function scopeSemantic(Builder $query, ?array $vector, float $maxDistance = 0.5): Builder
+    public function scopeSemantic(Builder $query, ?array $vector, float $maxDistance = 0.4): Builder
     {
         if (!$vector) {
             return $query;
