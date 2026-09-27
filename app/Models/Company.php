@@ -39,6 +39,15 @@ class Company extends Authenticatable
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saved(function (Company $company) {
+            if ($company->wasRecentlyCreated || $company->wasChanged(['name', 'description', 'cover_image_url', 'card_image_url'])) {
+                \App\Jobs\UpdateCompanyEmbedding::dispatch($company->id);
+            }
+        });
+    }
+
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
@@ -130,6 +139,19 @@ class Company extends Authenticatable
         }
 
         return $query;
+    }
+
+    public function scopeSemantic(\Illuminate\Database\Eloquent\Builder $query, ?array $vector): \Illuminate\Database\Eloquent\Builder
+    {
+        if (!$vector) {
+            return $query;
+        }
+
+        $literal = '['.implode(',', $vector).']';
+
+        return $query
+            ->whereNotNull('embedding')
+            ->selectRaw('companies.*, (embedding <=> ?) AS semantic_distance', [$literal]);
     }
 
     public function reviews(): HasManyThrough

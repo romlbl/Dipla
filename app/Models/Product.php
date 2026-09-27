@@ -80,6 +80,12 @@ class Product extends Model
 
             $product->images()->delete();
         });
+
+        static::saved(function (Product $product) {
+            if ($product->wasRecentlyCreated || $product->wasChanged(['title', 'description', 'keywords'])) {
+                \App\Jobs\UpdateProductEmbedding::dispatch($product->id);
+            }
+        });
     }
     /**
      * Recherche plein texte optimisée (FTS + Préfixes + Fautes de frappe).
@@ -164,6 +170,23 @@ class Product extends Model
         return $this->price !== null
             ? number_format($this->price, 2) . ' €'
             : 'Variable';
+    }
+
+    /**
+     * Filtre/trie par proximité vectorielle (sens du texte + de l'image).
+     * $vector = null → ne touche pas à la requête.
+     */
+    public function scopeSemantic(Builder $query, ?array $vector): Builder
+    {
+        if (!$vector) {
+            return $query;
+        }
+
+        $literal = '['.implode(',', $vector).']';
+
+        return $query
+            ->whereNotNull('embedding')
+            ->selectRaw('products.*, (embedding <=> ?) AS semantic_distance', [$literal]);
     }
 
 }

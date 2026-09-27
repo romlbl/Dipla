@@ -20,4 +20,13 @@ class ProductImage extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    protected static function booted(): void
+    {
+        $dispatch = fn (ProductImage $image) => \App\Jobs\UpdateProductEmbedding::dispatch($image->product_id);
+
+        static::created($dispatch);
+        static::deleted($dispatch);
+    }
+
 }

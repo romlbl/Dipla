@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Product;
 use App\Models\Company;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -32,8 +33,30 @@ class CompanyStorefront extends Component
 
     public function render()
     {
+        $semanticIds = [];
+
+        if (!blank($this->search)) {
+            $vector = app(\App\Services\EmbeddingService::class)->embed($this->search);
+
+            if ($vector) {
+                $semanticIds = Product::query()->semantic($vector)
+                    ->orderBy('semantic_distance')
+                    ->limit(30)
+                    ->pluck('id')
+                    ->all();
+            }
+        }
+
         $products = $this->company->products()
-            ->when($this->search !== '', fn ($q) => $q->search(mb_substr(trim($this->search), 0, 100)))
+            ->when($this->search !== '', function ($q) use ($semanticIds) {
+                $q->where(function ($inner) use ($semanticIds) {
+                    $inner->search(mb_substr(trim($this->search), 0, 100));
+
+                    if (!empty($semanticIds)) {
+                        $inner->orWhereIn('id', $semanticIds);
+                    }
+                });
+            })
             ->with(['images', 'company', 'reviews'])
             ->latest()
             ->paginate(8);

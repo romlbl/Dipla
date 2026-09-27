@@ -27,6 +27,9 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'huggingface' => [
+        'key' => env('HUGGINGFACE_API_KEY'),
+    ],
     'imagekit' => [
         'public_key' => env('IMAGEKIT_PUBLIC_KEY'),
         'private_key' => env('IMAGEKIT_PRIVATE_KEY'),

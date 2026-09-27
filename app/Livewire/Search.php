@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Services\EmbeddingService;
 use App\Models\Company;
 use App\Models\Product;
 use Livewire\Attributes\Layout;
@@ -102,7 +103,44 @@ class Search extends Component
         ]);
     }
 
-    protected function applyModeScopes($query, string $table)
+    protected ?array $cachedVector = null;
+    protected bool $vectorComputed = false;
+
+    /**
+     * Calcule le vecteur de la requête une seule fois par affichage (évite 2 appels API).
+     */
+    protected function embedQueryOnce(): ?array
+    {
+        if (!$this->vectorComputed) {
+            $this->vectorComputed = true;
+
+            $this->cachedVector = ($this->mode === 'keyword' && !blank($this->q))
+                ? app(EmbeddingService::class)->embed($this->q)
+                : null;
+        }
+
+        return $this->cachedVector;
+    }
+
+    /**
+     * Ids candidats par proximité de sens (top 30), vides si pas en mode mot-clé.
+     */
+    protected function semanticIds(string $modelClass): array
+    {
+        $vector = $this->embedQueryOnce();
+
+        if (!$vector) {
+            return [];
+        }
+
+        return $modelClass::query()->semantic($vector)
+            ->orderBy('semantic_distance')
+            ->limit(30)
+            ->pluck('id')
+            ->all();
+    }
+
+    protected function applyModeScopes($query, string $table, array $semanticIds = [])
     {
         switch ($this->mode) {
             case 'nearby':
@@ -125,7 +163,13 @@ class Search extends Component
 
             case 'keyword':
             default:
-                $query->search($this->q ?: null);
+                $query->where(function ($q) use ($semanticIds) {
+                    $q->search($this->q ?: null);
+
+                    if (!empty($semanticIds)) {
+                        $q->orWhereIn($q->getModel()->getTable().'.id', $semanticIds);
+                    }
+                });
 
                 if ($this->userLat && $this->userLng) {
                     $query->nearby($this->userLat, $this->userLng, $this->maxDistance ?? 200);
@@ -138,19 +182,19 @@ class Search extends Component
 
         return $query;
     }
-    
+
     protected function searchProducts()
     {
         $query = Product::query()->ofType($this->type ?: null)->maxPrice($this->maxPrice);
 
-        return $this->applyModeScopes($query, 'products')
+        return $this->applyModeScopes($query, 'products', $this->semanticIds(Product::class))
             ->with(['images', 'company', 'reviews'])
             ->paginate(10, ['*'], 'productsPage');
     }
 
     protected function searchCompanies()
     {
-        return $this->applyModeScopes(Company::query(), 'companies')
+        return $this->applyModeScopes(Company::query(), 'companies', $this->semanticIds(Company::class))
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->paginate(10, ['*'], 'companiesPage');
