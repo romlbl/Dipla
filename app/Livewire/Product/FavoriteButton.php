@@ -22,7 +22,7 @@ class FavoriteButton extends Component
     public function toggle(): void
     {
         if (!auth()->check()) {
-            $this->dispatch('notify', message: 'Connecte-toi pour ajouter aux favoris.');
+            $this->dispatch('notify', message: 'Connectez-vous pour ajouter aux favoris.');
             return;
         }
 

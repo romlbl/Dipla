@@ -50,7 +50,7 @@ document.addEventListener('alpine:init', () => {
 
             if (!navigator.geolocation) {
                 this.loading = false;
-                this.error = "Active ta position pour voir l'itinéraire.";
+                this.error = "Activez votre position pour voir l'itinéraire.";
                 return;
             }
 
@@ -64,7 +64,7 @@ document.addEventListener('alpine:init', () => {
                 },
                 () => {
                     this.loading = false;
-                    this.error = "Active ta position pour voir l'itinéraire.";
+                    this.error = "Activez votre position pour voir l'itinéraire.";
                 },
                 { timeout: 8000 }
             );
@@ -83,7 +83,7 @@ document.addEventListener('alpine:init', () => {
                 }).addTo(this.map);
 
                 L.marker([this.destLat, this.destLng]).addTo(this.map).bindPopup('Destination');
-                L.marker([this.originLat, this.originLng]).addTo(this.map).bindPopup('Toi');
+                L.marker([this.originLat, this.originLng]).addTo(this.map).bindPopup('Vous');
 
                 this.fetchRoutes();
             });

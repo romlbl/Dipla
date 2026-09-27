@@ -53,7 +53,7 @@
         <x-spinner class="text-[#1E3D59]" /> Localisation en cours…
     </div>
     <div x-show="locationError" class="text-sm text-[#4A3B5C] mb-4">
-        Position non disponible — le mode "à proximité" en a besoin, mais tu peux chercher par mot-clé.
+        Position non disponible — le mode "à proximité" en a besoin, mais vous pouvez chercher par mot-clé.
     </div>
 
     <div class="flex flex-col md:flex-row gap-6 md:gap-8">
@@ -195,7 +195,7 @@
 
                     @if($mode === 'nearby' && !$userLat)
                         <div class="rounded-2xl border border-dashed border-[#E2E8F0] p-10 text-center">
-                            <p class="text-[#333333]">Active ta position pour voir ce qu'il y a autour de toi.</p>
+                            <p class="text-[#333333]">Activez votre position pour voir ce qu'il y a autour de vous.</p>
                         </div>
                     @elseif($products->isEmpty())
                         <div class="rounded-2xl border border-dashed border-[#E2E8F0] p-10 text-center">
@@ -228,7 +228,7 @@
 
                     @if($mode === 'nearby' && !$userLat)
                         <div class="rounded-2xl border border-dashed border-[#E2E8F0] p-10 text-center">
-                            <p class="text-[#333333]">Active ta position pour voir les commerces autour de toi.</p>
+                            <p class="text-[#333333]">Activez votre position pour voir les commerces autour de vous.</p>
                         </div>
                     @elseif($companies->isEmpty())
                         @if($type === 'commerce')

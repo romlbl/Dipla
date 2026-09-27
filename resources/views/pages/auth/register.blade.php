@@ -18,7 +18,7 @@
 
             <div class="text-center mb-6">
                 <h1 class="text-2xl font-semibold text-[#1E293B]">Créer un compte</h1>
-                <p class="text-sm text-[#333333] mt-1">Rejoins Dipla pour découvrir les commerces autour de toi.</p>
+                <p class="text-sm text-[#333333] mt-1">Rejoins Dipla pour découvrir les commerces autour de vous.</p>
             </div>
 
             <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -35,7 +35,7 @@
                     required
                     autofocus
                     autocomplete="name"
-                    placeholder="Ton nom complet"
+                    placeholder="Votre nom"
                     class="rounded-xl! border-[#E2E8F0]! bg-[#FDFBF7]! focus:border-[#1E3D59]! focus:ring-[#1E3D59]/20!"
                 />
 
@@ -68,7 +68,7 @@
 
                     <div data-role="map" class="mt-3 h-56 w-full rounded-xl border border-[#E2E8F0] overflow-hidden"></div>
 
-                    <p class="text-xs text-[#333333]/60 mt-1">Ajoute ton adresse pour des résultats "à proximité" personnalisés — tu peux passer cette étape et l'ajouter plus tard.</p>
+                    <p class="text-xs text-[#333333]/60 mt-1">Ajoutez votre adresse pour des résultats "à proximité" personnalisés — vous pouvez passer cette étape et l'ajouter plus tard.</p>
 
                     <input type="hidden" name="latitude" data-role="latitude" value="{{ old('latitude') }}">
                     <input type="hidden" name="longitude" data-role="longitude" value="{{ old('longitude') }}">

@@ -1,7 +1,7 @@
 <div x-data="{ confirmingDelete: false }">
     <div class="mb-6">
         <h1 class="text-2xl font-semibold text-[#1E293B]">Paramètres</h1>
-        <p class="text-sm text-[#333333]/70 mt-1">Gère ton adresse email, ton mot de passe et ton compte.</p>
+        <p class="text-sm text-[#333333]/70 mt-1">Gèrez votre adresse email, votre mot de passe et votre compte.</p>
     </div>
 
     @if(session('settings-status'))
@@ -87,7 +87,7 @@
         <div class="rounded-2xl border border-red-200 bg-red-50/40 p-6 shadow-sm">
             <h2 class="text-base font-semibold text-red-700 mb-2">Supprimer mon compte</h2>
             <p class="text-sm text-red-700/80 mb-4">
-                Cette action est définitive. Elle supprime ton compte, tous tes produits, leurs photos, ainsi que les avis et questions associés.
+                Cette action est définitive. Elle supprime votre compte, tous vos produits, leurs photos, ainsi que les avis et questions associés.
             </p>
 
             <button type="button" @click="confirmingDelete = true"
@@ -105,7 +105,7 @@
              class="w-full max-w-md rounded-2xl bg-[#FDFBF7] p-6 shadow-lg">
             <h3 class="text-base font-semibold text-[#1E293B]">Confirmer la suppression du compte</h3>
             <p class="text-sm text-[#333333] mt-1">
-                Cette action est irréversible. Saisis ton mot de passe pour confirmer.
+                Cette action est irréversible. Saisissez votre mot de passe pour confirmer.
             </p>
 
             <form wire:submit="deleteAccount" class="mt-4 flex flex-col gap-3">

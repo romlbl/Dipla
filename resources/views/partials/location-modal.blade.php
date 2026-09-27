@@ -54,7 +54,7 @@
 
                 <div x-ref="modalMap" class="mt-3 h-64 w-full rounded-xl border border-[#E2E8F0] overflow-hidden"></div>
 
-                <p class="text-xs text-[#333333]/60 mt-1">Tu peux aussi cliquer sur la carte ou déplacer le repère.</p>
+                <p class="text-xs text-[#333333]/60 mt-1">Vous pouvez aussi cliquer sur la carte ou déplacer le repère.</p>
 
                 <div class="flex gap-3 mt-5">
                     <button type="button" @click="clearLocation()"

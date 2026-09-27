@@ -25,7 +25,7 @@
     {{-- Placé en dehors du <a> ci-dessous : un clic ici ne doit jamais déclencher la navigation vers la fiche produit --}}
     <livewire:product.favorite-heart :product="$product" :key="'fav-heart-'.$product->id" />
 
-    <a href="{{ route('products.show', $product) }}" wire:navigate class="block">
+    <a href="{{ route('products.show', $product) }}" wire:navigate.hover="false" class="block">
 
         {{-- Image au format portrait 2:3, cohérent avec le recadrage utilisé côté entreprise --}}
         <div class="relative w-full aspect-[2/3] overflow-hidden rounded-xl bg-[#E2E8F0]">

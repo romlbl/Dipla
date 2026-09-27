@@ -22,7 +22,7 @@ class ReviewsSection extends Component
     public function submitReview(): void
     {
         if (!auth()->check()) {
-            $this->addError('auth', 'Connecte-toi pour laisser un avis.');
+            $this->addError('auth', 'Connectez-vous pour laisser un avis.');
             return;
         }
 

@@ -35,7 +35,7 @@
             </li>
             <li>
                 <strong>Messages de contact</strong> : nom, e-mail et message saisis dans le formulaire. Finalité : vous répondre.
-                Ils sont reçus par e-mail et conservés le temps de traiter ta demande.
+                Ils sont reçus par e-mail et conservés le temps de traiter votre demande.
             </li>
         </ul>
     </x-legal.section>

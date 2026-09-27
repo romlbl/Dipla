@@ -10,7 +10,7 @@
      class="fixed inset-x-0 bottom-0 z-[70] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-4 sm:pb-4">
     <div class="mx-auto flex max-w-3xl flex-col gap-3 rounded-2xl border border-[#E2E8F0] bg-[#FAFAFF] p-4 shadow-lg sm:flex-row sm:items-center sm:gap-5">
         <p class="text-sm leading-relaxed text-[#333333]">
-            Dipla n'utilise que des cookies indispensables (connexion, sécurité) et retient sur ton appareil la position de recherche que tu choisis.
+            Dipla n'utilise que des cookies indispensables (connexion, sécurité) et retient sur votre appareil la position de recherche que vous choisissez.
             Aucun suivi publicitaire ni statistique.
             <a href="{{ route('legal.privacy') }}" wire:navigate class="font-medium text-[#1E3D59] underline underline-offset-2">En savoir plus</a>
         </p>

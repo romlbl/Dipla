@@ -60,10 +60,10 @@
                         @endfor
                     </div>
 
-                    <input type="text" wire:model="subject" placeholder="Résume ton avis en quelques mots"
+                    <input type="text" wire:model="subject" placeholder="Résumez votre avis en quelques mots"
                            class="w-full rounded-xl border border-[#E2E8F0] bg-[#FDFBF7] px-4 py-2.5 text-sm text-[#333333] focus:border-[#1E3D59] focus:outline-none focus:ring-2 focus:ring-[#1E3D59]/20">
 
-                    <textarea wire:model="content" rows="4" placeholder="Ton expérience avec ce produit/service..."
+                    <textarea wire:model="content" rows="4" placeholder="Votre expérience avec ce produit/service..."
                               class="w-full rounded-xl border border-[#E2E8F0] bg-[#FDFBF7] px-4 py-2.5 text-sm text-[#333333] focus:border-[#1E3D59] focus:outline-none focus:ring-2 focus:ring-[#1E3D59]/20"></textarea>
 
                 <button type="submit" wire:loading.attr="disabled" wire:target="submitReview"
@@ -74,7 +74,7 @@
                 </form>
             @else
                 <div class="rounded-xl border border-dashed border-[#E2E8F0] p-5 text-sm text-[#333333]/60">
-                    <a href="{{ route('login') }}" wire:navigate class="text-[#1E3D59] font-medium hover:underline">Connecte-toi</a>
+                    <a href="{{ route('login') }}" wire:navigate class="text-[#1E3D59] font-medium hover:underline">Connectez-vous</a>
                     pour laisser un avis.
                 </div>
             @endauth

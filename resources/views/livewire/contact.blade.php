@@ -17,7 +17,7 @@
 
     @if($sent)
         <div role="status" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-700">
-            Message envoyé, merci ! Nous te répondons par e-mail.
+            Message envoyé, merci ! Nous vous répondons par e-mail.
         </div>
         <a href="{{ route('home') }}" wire:navigate
            class="mt-4 inline-flex text-sm font-medium text-[#1E3D59] hover:underline">&larr; Retour à l'accueil</a>
@@ -69,7 +69,7 @@
             </button>
 
             <p class="text-xs text-[#333333]/60">
-                Ces informations servent uniquement à te répondre.
+                Ces informations servent uniquement à vous répondre.
                 <a href="{{ route('legal.privacy') }}" wire:navigate class="underline underline-offset-2 hover:text-[#1E3D59]">Politique de confidentialité</a>
             </p>
         </form>

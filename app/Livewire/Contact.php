@@ -16,6 +16,7 @@ class Contact extends Component
         'question' => 'Question',
         'bug' => 'Problème technique',
         'content' => 'Signaler un contenu',
+        'upgrade' => 'Proposer une amélioration',
         'data' => 'Mes données personnelles',
         'other' => 'Autre',
     ];

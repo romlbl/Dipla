@@ -36,7 +36,7 @@
                             @else
                                 <div class="flex gap-2 mt-2">
                                     <input type="text" wire:model="replyContent.{{ $question->id }}"
-                                           placeholder="Ta réponse..."
+                                           placeholder="Votre réponse..."
                                            class="flex-1 rounded-xl border border-[#E2E8F0] bg-white px-4 py-2 text-sm text-[#333333] focus:border-[#1E3D59] focus:outline-none focus:ring-2 focus:ring-[#1E3D59]/20">
                                     <button type="button" wire:click="submitReply({{ $question->id }})"
                                         wire:loading.attr="disabled" wire:target="submitReply({{ $question->id }})"
@@ -79,7 +79,7 @@
                 </div>
             @else
                 <div class="rounded-xl border border-dashed border-[#E2E8F0] p-5 text-sm text-[#333333]/60">
-                    <a href="{{ route('login') }}" wire:navigate class="text-[#1E3D59] font-medium hover:underline">Connecte-toi</a>
+                    <a href="{{ route('login') }}" wire:navigate class="text-[#1E3D59] font-medium hover:underline">Connectez-vous</a>
                     pour poser une question.
                 </div>
             @endauth

@@ -23,7 +23,7 @@ class Discussions extends Component
     public function submitQuestion(): void
     {
         if (!auth()->check()) {
-            $this->addError('auth', 'Connecte-toi pour poser une question.');
+            $this->addError('auth', 'Connectez-vous pour poser une question.');
             return;
         }
 
@@ -49,7 +49,7 @@ class Discussions extends Component
     public function submitReply(int $discussionId): void
     {
         if (!auth()->check()) {
-            $this->addError('auth', 'Connecte-toi pour répondre.');
+            $this->addError('auth', 'Connectez-vous pour répondre.');
             return;
         }
 

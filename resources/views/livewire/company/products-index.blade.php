@@ -50,7 +50,7 @@
     {{-- Grille produits --}}
     @if($products->isEmpty())
         <div class="rounded-2xl border border-dashed border-[#E2E8F0] p-10 text-center">
-            <p class="text-[#333333]">Aucun produit ne correspond à ta recherche.</p>
+            <p class="text-[#333333]">Aucun produit ne correspond à votre recherche.</p>
             <a href="{{ route('company.products.create') }}" class="text-sm text-[#1E3D59] font-medium hover:underline mt-2 inline-block">
                 Publier votre premier produit
             </a>
