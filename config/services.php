@@ -27,8 +27,9 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-    'huggingface' => [
-        'key' => env('HUGGINGFACE_API_KEY'),
+    'cloudflare' => [
+        'account_id' => env('CLOUDFLARE_ACCOUNT_ID'),
+        'token' => env('CLOUDFLARE_API_TOKEN'),
     ],
     'imagekit' => [
         'public_key' => env('IMAGEKIT_PUBLIC_KEY'),

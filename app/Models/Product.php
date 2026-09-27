@@ -176,7 +176,7 @@ class Product extends Model
      * Filtre/trie par proximité vectorielle (sens du texte + de l'image).
      * $vector = null → ne touche pas à la requête.
      */
-    public function scopeSemantic(Builder $query, ?array $vector): Builder
+    public function scopeSemantic(Builder $query, ?array $vector, float $maxDistance = 0.3): Builder
     {
         if (!$vector) {
             return $query;
@@ -186,7 +186,9 @@ class Product extends Model
 
         return $query
             ->whereNotNull('embedding')
-            ->selectRaw('products.*, (embedding <=> ?) AS semantic_distance', [$literal]);
+            ->selectRaw('products.*, (embedding <=> ?) AS semantic_distance', [$literal])
+            ->whereRaw('(embedding <=> ?) <= ?', [$literal, $maxDistance]) // Filtre les produits trop éloignés
+            ->orderByRaw('embedding <=> ?', [$literal]);
     }
 
 }

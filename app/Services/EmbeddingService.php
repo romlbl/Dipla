@@ -6,96 +6,73 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Calcule un vecteur CLIP (512 dim) à partir de texte et/ou image.
- * Texte et image partagent le même espace vectoriel : on peut les moyenner.
+ * Vecteur texte (768 dim, BGE) qui capte aussi le sens de l'image :
+ * l'image est d'abord décrite en texte (modèle vision), puis tout est
+ * embeddé ensemble. Un seul espace vectoriel, fiable, pas cher.
  */
 class EmbeddingService
 {
-    protected const MODEL_URL = 'https://api-inference.huggingface.co/models/sentence-transformers/clip-ViT-B-32';
+    protected function endpoint(string $model): string
+    {
+        $accountId = config('services.cloudflare.account_id');
+        return "https://api.cloudflare.com/client/v4/accounts/{$accountId}/ai/run/{$model}";
+    }
 
-    /**
-     * Vecteur combiné texte + image (ou texte seul si pas de photo).
-     */
     public function embed(string $text, ?string $imageUrl = null): ?array
     {
-        $textVec = $this->embedText($text);
+        $caption = $imageUrl ? $this->describeImage($imageUrl) : null;
 
-        if (!$textVec) {
-            return null;
-        }
+        $fullText = trim($text.' '.$caption);
 
-        if (!$imageUrl) {
-            return $textVec;
-        }
-
-        $imageVec = $this->embedImage($imageUrl);
-
-        if (!$imageVec) {
-            return $textVec;
-        }
-
-        // Moyenne simple des deux vecteurs (même espace CLIP).
-        return array_map(fn ($t, $i) => ($t + $i) / 2, $textVec, $imageVec);
+        return $this->embedText($fullText);
     }
 
     protected function embedText(string $text): ?array
     {
         try {
-            $response = Http::withToken(config('services.huggingface.key'))
-                ->timeout(30)
-                ->post(self::MODEL_URL, [
-                    'inputs' => $text,
+            $response = Http::withToken(config('services.cloudflare.token'))
+                ->timeout(20)
+                ->post($this->endpoint('@cf/baai/bge-base-en-v1.5'), [
+                    'text' => $text,
                 ]);
 
             if (!$response->successful()) {
-                Log::error('HuggingFace embedding texte échoué', [
+                Log::error('Embedding texte Cloudflare échoué', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
-
                 return null;
             }
 
-            $data = $response->json();
-
-            Log::info('Réponse embedding texte', [
-                'type' => gettype($data),
-                'structure' => $data,
-            ]);
-
-            if (is_array($data) && isset($data[0]) && is_array($data[0])) {
-                return $data[0];
-            }
-
-            return is_array($data) ? $data : null;
-
+            return $response->json('result.data.0');
         } catch (\Throwable $e) {
-            Log::error('Exception embedding texte', [
-                'message' => $e->getMessage(),
-            ]);
-
+            Log::error('Exception embedding texte', ['message' => $e->getMessage()]);
             return null;
         }
     }
 
-    protected function embedImage(string $imageUrl): ?array
+    protected function describeImage(string $imageUrl): ?string
     {
         try {
             $imageBytes = Http::timeout(10)->get($imageUrl)->body();
+            $imageArray = array_values(unpack('C*', $imageBytes));
 
-            $response = Http::withToken(config('services.huggingface.key'))
-                ->timeout(15)
-                ->withBody($imageBytes, 'application/octet-stream')
-                ->post(self::MODEL_URL);
+            $response = Http::withToken(config('services.cloudflare.token'))
+                ->timeout(30)
+                ->post($this->endpoint('@cf/llava-hf/llava-1.5-7b-hf'), [
+                    'image' => $imageArray,
+                    'prompt' => 'Describe this product photo in a few keywords.',
+                    'max_tokens' => 50,
+                ]);
 
-            if ($response->successful()) {
-                $data = $response->json();
-                return is_array($data[0] ?? null) ? $data[0] : $data;
+            if (!$response->successful()) {
+                Log::warning('Description image échouée', ['status' => $response->status(), 'body' => $response->body()]);
+                return null;
             }
 
-            return null;
+            return $response->json('result.description');
         } catch (\Throwable $e) {
-            Log::warning('Embedding image échoué', ['message' => $e->getMessage()]);
+            Log::warning('Exception description image', ['message' => $e->getMessage()]);
             return null;
         }
     }

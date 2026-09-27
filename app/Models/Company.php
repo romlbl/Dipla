@@ -141,7 +141,7 @@ class Company extends Authenticatable
         return $query;
     }
 
-    public function scopeSemantic(\Illuminate\Database\Eloquent\Builder $query, ?array $vector): \Illuminate\Database\Eloquent\Builder
+    public function scopeSemantic(\Illuminate\Database\Eloquent\Builder $query, ?array $vector, float $maxDistance = 0.3): \Illuminate\Database\Eloquent\Builder
     {
         if (!$vector) {
             return $query;
@@ -151,7 +151,9 @@ class Company extends Authenticatable
 
         return $query
             ->whereNotNull('embedding')
-            ->selectRaw('companies.*, (embedding <=> ?) AS semantic_distance', [$literal]);
+            ->selectRaw('companies.*, (embedding <=> ?) AS semantic_distance', [$literal])
+            ->whereRaw('(embedding <=> ?) <= ?', [$literal, $maxDistance]) // Filtre les produits trop éloignés
+            ->orderByRaw('embedding <=> ?', [$literal]);
     }
 
     public function reviews(): HasManyThrough
