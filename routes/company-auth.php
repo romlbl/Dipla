@@ -29,7 +29,7 @@ Route::middleware('auth:company')
 
             $stats = [
                 'products_count' => $productIds->count(),
-                'total_views' => \App\Models\ViewHistory::whereIn('product_id', $productIds)->count(),
+                'total_views' => $company->products()->sum('views_count'),
                 'total_favorites' => \App\Models\Favorite::whereIn('product_id', $productIds)->count(),
                 'avg_rating' => round($reviews->avg('rating') ?? 0, 1),
                 'reviews_count' => $reviews->count(),

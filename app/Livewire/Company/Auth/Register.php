@@ -34,7 +34,6 @@ class Register extends Component
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
-        unset($validated['password_confirmation']);
         unset($validated['password_confirmation'], $validated['acceptTerms']);
 
         $company = Company::create($validated);

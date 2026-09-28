@@ -115,7 +115,7 @@ class Search extends Component
             $this->vectorComputed = true;
 
             $this->cachedVector = ($this->mode === 'keyword' && !blank($this->q))
-                ? app(EmbeddingService::class)->embed($this->q)
+                ? app(EmbeddingService::class)->embedQuery($this->q)
                 : null;
         }
 

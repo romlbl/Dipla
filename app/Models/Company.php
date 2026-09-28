@@ -55,9 +55,9 @@ class Company extends Authenticatable
 
     public function pendingQuestionsCount(): int
     {
-        return \App\Models\Discussion::whereIn('product_id', $this->products()->pluck('id'))
+        return Discussion::whereIn('product_id', $this->products()->select('id'))
             ->whereNull('parent_id')
-            ->doesntHave('replies')
+            ->doesntHave('companyReply')
             ->count();
     }
 
@@ -142,7 +142,7 @@ class Company extends Authenticatable
     }
 
 
-    public function scopeSemantic(\Illuminate\Database\Eloquent\Builder $query, ?array $vector, float $maxDistance = 0.34): \Illuminate\Database\Eloquent\Builder
+    public function scopeSemantic(\Illuminate\Database\Eloquent\Builder $query, ?array $vector, float $maxDistance = 0.55): \Illuminate\Database\Eloquent\Builder
     {
         if (!$vector) {
             return $query;

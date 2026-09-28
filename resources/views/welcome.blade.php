@@ -93,6 +93,7 @@
         <p class="font-sans text-xs text-[#333333]/50">
             {{ $companiesCount }} commerces · {{ $productsCount }} produits
         </p>
+        </div>
     </section>
 
     {{-- Nouveau --}}

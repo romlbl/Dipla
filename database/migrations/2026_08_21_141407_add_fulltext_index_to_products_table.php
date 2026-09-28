@@ -7,6 +7,9 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::getDriverName() !== 'pgsql') {
+            return;
+        }
         DB::statement("
             ALTER TABLE products
             ADD COLUMN search_vector tsvector
@@ -20,6 +23,9 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::getDriverName() !== 'pgsql') {
+            return;
+        }
         DB::statement("DROP INDEX IF EXISTS products_search_vector_idx");
         DB::statement("ALTER TABLE products DROP COLUMN IF EXISTS search_vector");
     }

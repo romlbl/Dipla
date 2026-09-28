@@ -8,7 +8,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-[#FBF9F8] text-[#333333] font-sans antialiased">
-
+    @php
+        $company = auth('company')->user();
+        $pendingQuestionsCount = $company->pendingQuestionsCount();
+        $isOpen = $company->isOpenNow();
+    @endphp
     {{-- Sidebar desktop --}}
     <aside class="hidden md:flex md:flex-col md:w-64 md:fixed md:inset-y-0 md:left-0 bg-[#252623] text-[#E4E2DE] z-30">
         <div class="flex items-center gap-3 px-6 py-6 border-b border-white/10">
@@ -111,9 +115,6 @@
 
     {{-- Contenu --}}
     <div class="md:pl-64">
-        @php
-            $pendingQuestionsCount = auth('company')->user()->pendingQuestionsCount();
-        @endphp
         {{-- Top bar desktop --}}
         <header class="hidden md:flex sticky top-0 z-20 h-16 items-center justify-between border-b border-[#E2E8F0] bg-[#FDFBF7] px-8">
             <form action="{{ route('company.products.index') }}" method="GET" class="relative w-72">

@@ -8,15 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('discussions', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->nullable()->change();
+        Schema::table('products', function (Blueprint $table) {
+            $table->unsignedInteger('views_count')->default(0);
         });
     }
 
     public function down(): void
     {
-        Schema::table('discussions', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->nullable(false)->change();
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('views_count');
         });
     }
 };

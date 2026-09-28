@@ -24,16 +24,27 @@ class GeocodeController extends Controller
 
         $cacheKey = 'geocode:search:' . md5($q);
 
-        $results = Cache::remember($cacheKey, now()->addDay(), function () use ($q) {
+        if (Cache::has($cacheKey)) {
+            return response()->json(Cache::get($cacheKey));
+        }
+
+        try {
             $response = Http::timeout(4)->get('https://us1.locationiq.com/v1/autocomplete', [
                 'key' => $this->key(),
                 'q' => $q,
                 'format' => 'json',
                 'limit' => 5,
             ]);
+        } catch (\Throwable $e) {
+            return response()->json([]);
+        }
 
-            return $response->successful() ? $response->json() : [];
-        });
+        if (! $response->successful()) {
+            return response()->json([]);
+        }
+
+        $results = $response->json();
+        Cache::put($cacheKey, $results, now()->addDay());
 
         return response()->json($results);
     }
@@ -82,7 +93,7 @@ class GeocodeController extends Controller
     // Itinéraire entre 2 points
     public function route(Request $request, string $mode)
     {
-        $profiles = ['walking' => 'walking', 'cycling' => 'driving', 'driving' => 'driving'];
+        $profiles = ['walking' => 'walking', 'cycling' => 'cycling', 'driving' => 'driving'];
         $profile = $profiles[$mode] ?? null;
 
         if (!$profile) {

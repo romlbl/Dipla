@@ -2,16 +2,18 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Vecteur texte (768 dim, BGE) qui capte aussi le sens de l'image :
- * l'image est d'abord décrite en texte (modèle vision), puis tout est
- * embeddé ensemble. Un seul espace vectoriel, fiable, pas cher.
+ * Vecteur texte multilingue (BGE-M3, 1024 dim). L'image est d'abord décrite
+ * en texte (modèle vision), puis tout est embeddé ensemble.
  */
 class EmbeddingService
 {
+    protected const TEXT_MODEL = '@cf/baai/bge-m3';
+
     protected function endpoint(string $model): string
     {
         $accountId = config('services.cloudflare.account_id');
@@ -22,9 +24,22 @@ class EmbeddingService
     {
         $caption = $imageUrl ? $this->describeImage($imageUrl) : null;
 
-        $fullText = trim($text.' '.$caption);
+        return $this->embedText(trim($text.' '.$caption));
+    }
 
-        return $this->embedText($fullText);
+    /**
+     * Vecteur d'une recherche, mis en cache 24 h : évite un appel API
+     * à chaque rendu Livewire (pagination, filtres, sliders).
+     */
+    public function embedQuery(string $query): ?array
+    {
+        $query = mb_strtolower(trim($query));
+
+        return Cache::remember(
+            'embed:bge-m3:'.md5($query),
+            now()->addDay(),
+            fn () => $this->embed($query)
+        );
     }
 
     protected function embedText(string $text): ?array
@@ -32,9 +47,7 @@ class EmbeddingService
         try {
             $response = Http::withToken(config('services.cloudflare.token'))
                 ->timeout(20)
-                ->post($this->endpoint('@cf/baai/bge-base-en-v1.5'), [
-                    'text' => $text,
-                ]);
+                ->post($this->endpoint(self::TEXT_MODEL), ['text' => $text]);
 
             if (!$response->successful()) {
                 Log::error('Embedding texte Cloudflare échoué', [

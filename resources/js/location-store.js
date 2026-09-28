@@ -1,9 +1,29 @@
-// Store partagé entre le header et la page d'accueil : retient l'adresse
-// choisie par l'utilisateur pour ses recherches ("À proximité" -> nom du lieu).
-// Persisté en localStorage pour survivre aux rechargements de page et aux
-// navigations wire:navigate.
+// Store partagé (header, accueil, recherche) : adresse choisie pour les recherches.
+// Persisté en localStorage ; toutes les lectures/écritures sont protégées
+// (navigation privée, stockage bloqué).
 
 const STORAGE_KEY = 'dipla-search-location';
+
+function readSaved() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        return saved && saved.lat && saved.lng ? saved : null;
+    } catch (error) {
+        return null;
+    }
+}
+
+function writeSaved(value) {
+    try {
+        if (value) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+        } else {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+    } catch (error) {
+        // Stockage indisponible : la position reste valable pour la session.
+    }
+}
 
 document.addEventListener('alpine:init', () => {
     Alpine.store('searchLocation', {
@@ -12,28 +32,18 @@ document.addEventListener('alpine:init', () => {
         lng: null,
 
         init() {
-            // Juste après une connexion, l'adresse du compte doit prendre le
-            // dessus même sur une position déjà en mémoire (héritée d'avant la
-            // connexion). Dans tous les autres cas, une position déjà choisie
-            // reste prioritaire (voir layouts/public.blade.php pour le flag).
+            // Juste après connexion, l'adresse du compte écrase la position en mémoire.
             if (!window.diplaJustLoggedIn) {
-                try {
-                    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+                const saved = readSaved();
 
-                    if (saved && saved.lat && saved.lng) {
-                        this.label = saved.label;
-                        this.lat = saved.lat;
-                        this.lng = saved.lng;
-                        return;
-                    }
-                } catch (error) {
-                    console.warn('Impossible de lire la position enregistrée', error);
+                if (saved) {
+                    this.label = saved.label;
+                    this.lat = saved.lat;
+                    this.lng = saved.lng;
+                    return;
                 }
             }
 
-            // Aucune position à garder : si l'utilisateur connecté a une
-            // adresse enregistrée, on l'utilise (par défaut, ou en écrasement
-            // juste après connexion).
             const userLocation = window.diplaUserLocation;
             if (userLocation && userLocation.lat && userLocation.lng) {
                 this.set(userLocation.label, userLocation.lat, userLocation.lng);
@@ -44,16 +54,14 @@ document.addEventListener('alpine:init', () => {
             this.label = label;
             this.lat = lat;
             this.lng = lng;
-
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({ label, lat, lng }));
+            writeSaved({ label, lat, lng });
         },
 
         clear() {
             this.label = null;
             this.lat = null;
             this.lng = null;
-
-            localStorage.removeItem(STORAGE_KEY);
+            writeSaved(null);
         },
 
         get hasLocation() {

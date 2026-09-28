@@ -93,8 +93,7 @@
         {{-- Description --}}
         <div>
             <label for="storefront-description" class="block text-sm font-medium text-[#1E293B] mb-1">Description</label>
-            // resources/views/livewire/company/edit-storefront.blade.php
-<x-rich-textarea id="storefront-description" wire:model="description" rows="4">{{ $company->description }}</x-rich-textarea>
+            <x-rich-textarea id="storefront-description" wire:model="description" rows="4">{{ $company->description }}</x-rich-textarea>
             @error('description') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
         </div>
 

@@ -117,7 +117,6 @@ export function initLocationPicker(container) {
         if (query.length === 0) clearPosition();
         if (query.length < 3) { hideSuggestions(); return; }
 
-        addressInput.classList.add('bg-[url("data:image/svg+xml,...spinner...")]'); // ou classe custom
         debounceTimer = setTimeout(async () => {
             try {
                 const response = await fetch(`/api/geocode/search?q=${encodeURIComponent(query)}`);
@@ -126,8 +125,6 @@ export function initLocationPicker(container) {
                 renderSuggestions(results);
             } catch (error) {
                 console.error('Erreur de géocodage', error);
-            } finally {
-                addressInput.classList.remove('...spinner-class...');
             }
         }, 400);
     });

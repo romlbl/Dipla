@@ -36,7 +36,7 @@ class CompanyStorefront extends Component
         $semanticIds = [];
 
         if (!blank($this->search)) {
-            $vector = app(\App\Services\EmbeddingService::class)->embed($this->search);
+            $vector = app(\App\Services\EmbeddingService::class)->embedQuery($this->search);
 
             if ($vector) {
                 $semanticIds = Product::query()->semantic($vector)

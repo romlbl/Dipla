@@ -155,7 +155,7 @@
 
     <x-legal.section title="Sécurité">
         <p>
-            Les mots de passe sont hachés (bcrypt), les échanges sont chiffrés (HTTPS) et une authentification à deux facteurs ou par clé d'accès est proposée.
+            Les mots de passe sont hachés (bcrypt) et les échanges sont chiffrés (HTTPS).
         </p>
     </x-legal.section>
 

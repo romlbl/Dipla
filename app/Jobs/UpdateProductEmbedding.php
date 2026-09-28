@@ -6,13 +6,15 @@ use App\Models\Product;
 use App\Services\EmbeddingService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class UpdateProductEmbedding implements ShouldQueue
+
+class UpdateProductEmbedding implements ShouldQueue, ShouldBeUniqueUntilProcessing
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -74,5 +76,9 @@ class UpdateProductEmbedding implements ShouldQueue
         Log::info('Embedding enregistré', [
             'product_id' => $product->id,
         ]);
+    }
+    public function uniqueId(): string
+    {
+        return (string) $this->productId;
     }
 }

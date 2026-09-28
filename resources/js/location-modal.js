@@ -24,11 +24,6 @@ document.addEventListener('alpine:init', () => {
             this.$nextTick(() => this.initMap());
         },
 
-        closeModal() {
-            this.open = false;
-            this.suggestions = [];
-        },
-
         initMap() {
             if (this.mapReady) {
                 this.map.invalidateSize();

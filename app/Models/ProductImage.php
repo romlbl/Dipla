@@ -23,10 +23,10 @@ class ProductImage extends Model
 
     protected static function booted(): void
     {
-        $dispatch = fn (ProductImage $image) => \App\Jobs\UpdateProductEmbedding::dispatch($image->product_id);
+        $refresh = fn (ProductImage $image) => $image->product?->refreshEmbedding();
 
-        static::created($dispatch);
-        static::deleted($dispatch);
+        static::created($refresh);
+        static::deleted($refresh);
     }
 
 }

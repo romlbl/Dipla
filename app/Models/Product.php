@@ -83,7 +83,7 @@ class Product extends Model
 
         static::saved(function (Product $product) {
             if ($product->wasRecentlyCreated || $product->wasChanged(['title', 'description', 'keywords'])) {
-                \App\Jobs\UpdateProductEmbedding::dispatch($product->id);
+                $product->refreshEmbedding();
             }
         });
     }
@@ -172,11 +172,16 @@ class Product extends Model
             : 'Variable';
     }
 
+    public function refreshEmbedding(): void
+    {
+        \App\Jobs\UpdateProductEmbedding::dispatch($this->id)->delay(now()->addSeconds(15));
+    }
+
     /**
      * Filtre/trie par proximité vectorielle (sens du texte + de l'image).
      * $vector = null → ne touche pas à la requête.
      */
-    public function scopeSemantic(Builder $query, ?array $vector, float $maxDistance = 0.34): Builder
+    public function scopeSemantic(Builder $query, ?array $vector, float $maxDistance = 0.55): Builder
     {
         if (!$vector) {
             return $query;

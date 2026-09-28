@@ -134,7 +134,7 @@
         </nav>
 
         {{-- Menu mobile : en overlay pour ne jamais recouvrir/décaler le contenu de la page --}}
-        <ul id="menu-mobile" class="absolute inset-x-0 top-full hidden flex-col gap-1 border-t border-[#E2E8F0]/60 bg-[#FBF9F8] px-4 py-3 text-sm font-semibold text-[#333333]/80 shadow-lg">
+        <ul id="menu-mobile" class="absolute inset-x-0 top-full hidden flex-col gap-1 border-t border-[#E2E8F0]/60 bg-[#FBF9F8] px-4 py-3 text-sm font-semibold text-[#333333]/80 shadow-lg md:hidden">
             <li>
                 <a href="{{ route('home') }}" wire:navigate class="block py-2 {{ request()->routeIs('home') ? 'text-[#1E3D59]' : '' }}">
                     Explorer

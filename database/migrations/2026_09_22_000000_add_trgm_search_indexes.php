@@ -7,6 +7,9 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::getDriverName() !== 'pgsql') {
+            return;
+        }
         DB::statement('CREATE EXTENSION IF NOT EXISTS pg_trgm');
 
         DB::statement('CREATE INDEX IF NOT EXISTS products_title_trgm_idx ON products USING GIN (title gin_trgm_ops)');
@@ -17,6 +20,9 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::getDriverName() !== 'pgsql') {
+            return;
+        }
         DB::statement('DROP INDEX IF EXISTS products_title_trgm_idx');
         DB::statement('DROP INDEX IF EXISTS products_keywords_trgm_idx');
         DB::statement('DROP INDEX IF EXISTS products_description_trgm_idx');
