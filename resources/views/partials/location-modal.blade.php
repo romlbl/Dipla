@@ -26,6 +26,10 @@
                     <button type="button" @click="closeModal()" aria-label="Fermer" class="text-[#333333]/50 hover:text-[#333333]">✕</button>
                 </div>
 
+                <p x-show="firstVisit" x-cloak class="mb-3 text-sm text-[#333333]/70">
+                    Bienvenue ! Activez votre position ou choisissez un lieu pour voir les commerces autour de vous.
+                </p>
+
                 <div class="relative">
                     <input type="text" x-model="query" @input="onQueryInput()" @focus="focused = true" @blur="focused = false; closeSuggestions()" @keydown.escape.stop="closeSuggestions()" autocomplete="off"
                            placeholder="Ville, adresse, quartier..."

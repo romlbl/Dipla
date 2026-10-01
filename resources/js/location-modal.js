@@ -18,6 +18,22 @@ document.addEventListener('alpine:init', () => {
         searchTimer: null,
         focused: false,
         locating: false,
+        firstVisit: false,
+
+        init() {
+            // Première visite sans position : ouvre la modale une seule fois.
+            try {
+                if (this.$store.searchLocation.hasLocation) return;
+                if (localStorage.getItem('dipla-location-asked') === '1') return;
+                localStorage.setItem('dipla-location-asked', '1');
+            } catch (e) {
+                return; // stockage bloqué : on n'insiste pas
+            }
+
+            this.firstVisit = true;
+            this.openModal();
+        },
+
 
         openModal() {
             this.open = true;
@@ -114,6 +130,7 @@ document.addEventListener('alpine:init', () => {
 
         closeModal() {
             this.open = false;
+            this.firstVisit = false;
             this.closeSuggestions();
         },
 
