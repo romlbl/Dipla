@@ -3,6 +3,7 @@
 namespace App\Livewire\Company\Auth;
 
 use App\Models\Company;
+use App\Concerns\ThrottlesActions;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -12,6 +13,8 @@ use Livewire\Component;
 #[Layout('layouts.guest')]
 class Register extends Component
 {
+    use ThrottlesActions;    
+
     public string $name = '';
     public string $email = '';
     public string $password = '';
@@ -32,7 +35,8 @@ class Register extends Component
             'longitude' => ['required', 'numeric', 'between:-180,180'],
             'acceptTerms' => ['accepted'],
         ]);
-
+        $this->throttle('register-company', 5, 3600, 'email');
+        
         $validated['password'] = Hash::make($validated['password']);
         unset($validated['password_confirmation'], $validated['acceptTerms']);
 

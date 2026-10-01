@@ -4,10 +4,12 @@ namespace App\Livewire\Product;
 
 use App\Models\Product;
 use App\Models\Review;
+use App\Concerns\ThrottlesActions;
 use Livewire\Component;
 
 class ReviewsSection extends Component
 {
+    use ThrottlesActions;
     public Product $product;
 
     public string $subject = '';
@@ -31,6 +33,13 @@ class ReviewsSection extends Component
             'content' => ['required', 'string', 'max:2000'],
             'rating' => ['required', 'integer', 'between:1,5'],
         ]);
+
+        if ($this->product->reviews()->where('user_id', auth()->id())->exists()) {
+            $this->addError('content', 'Vous avez déjà donné votre avis sur ce produit.');
+            return;
+        }
+
+        $this->throttle('review', 5, 600, 'content');
 
         Review::create([
             'user_id' => auth()->id(),

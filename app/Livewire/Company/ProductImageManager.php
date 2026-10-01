@@ -26,8 +26,15 @@ class ProductImageManager extends Component
     public function updatedNewImages(): void
     {
         $this->validate([
-            'newImages.*' => ['image', 'max:5120'],
+            'newImages' => ['array', 'max:4'],
+            'newImages.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ]);
+
+        if ($this->product->images()->count() + count($this->newImages) > 4) {
+            $this->addError('newImages', 'Maximum 4 photos par produit.');
+            $this->newImages = [];
+            return;
+        }
 
         $imageKit = app(ImageKitService::class);
         $position = ($this->product->images()->max('position') ?? -1) + 1;

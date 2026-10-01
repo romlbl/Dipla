@@ -1,4 +1,4 @@
-<x-legal.page title="Mentions légales" updated="19 septembre 2026">
+<x-legal.page title="Mentions légales" updated="1 octobre 2026">
 
     <x-legal.section title="Éditeur du site">
         <p>
@@ -40,7 +40,7 @@
         </p>
         <p>
             Fonds de carte et données géographiques : © les contributeurs d'OpenStreetMap, sous licence ODbL.
-            Recherche d'adresses : Nominatim. Calcul d'itinéraires : OSRM.
+            Recherche d'adresses et calcul d'itinéraires : LocationIQ. Fond animé : Neat (FireCMS).
         </p>
     </x-legal.section>
 

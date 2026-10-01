@@ -1,4 +1,4 @@
-<x-legal.page title="Politique de confidentialité" updated="19 septembre 2026">
+<x-legal.page title="Politique de confidentialité" updated="1 octobre 2026">
 
     <x-legal.section title="Qui est responsable de vos données ?">
         <p>
@@ -117,9 +117,16 @@
             <li><strong>Neon</strong> : base de données, région Europe (Francfort).</li>
             <li><strong>ImageKit</strong> : stockage et diffusion des photos.</li>
             <li>
-                <strong>OpenStreetMap, Nominatim et OSRM</strong> : affichage des cartes, recherche d'adresses et calcul d'itinéraires.
-                Votre navigateur contacte directement ces services : ils reçoivent votre adresse IP, et les adresses ou coordonnées nécessaires à la carte,
-                à la recherche ou à l'itinéraire.
+                <strong>OpenStreetMap</strong> : affichage des cartes. Votre navigateur charge directement les tuiles :
+                OpenStreetMap reçoit votre adresse IP et la zone affichée.
+            </li>
+            <li>
+                <strong>LocationIQ</strong> : recherche d'adresses, adresse à partir de coordonnées et calcul d'itinéraires.
+                Les requêtes passent par nos serveurs : LocationIQ reçoit le texte ou les coordonnées concernés, pas votre adresse IP.
+            </li>
+            <li>
+                <strong>Cloudflare</strong> : analyse du sens des recherches, des produits et des commerces pour améliorer les résultats.
+                Cloudflare reçoit les mots tapés dans la recherche (sans vous identifier), ainsi que les textes et photos publiés par les commerces.
             </li>
             <li><strong>Resend</strong> : envoi des e-mails du site (formulaire de contact).</li>
         </ul>

@@ -4,10 +4,12 @@ namespace App\Livewire\Product;
 
 use App\Models\Discussion;
 use App\Models\Product;
+use App\Concerns\ThrottlesActions;
 use Livewire\Component;
 
 class Discussions extends Component
 {
+    use ThrottlesActions;
     public Product $product;
 
     public string $newQuestion = '';
@@ -30,6 +32,7 @@ class Discussions extends Component
         $this->validate([
             'newQuestion' => ['required', 'string', 'max:1000'],
         ]);
+        $this->throttle('question', 5, 600, 'auth');
 
         Discussion::create([
             'user_id' => auth()->id(),
@@ -60,7 +63,7 @@ class Discussions extends Component
             [],
             ["replyContent.$discussionId" => 'réponse'],
         );
-
+        $this->throttle('reply', 10, 600, "replyContent.$discussionId");
         // discussions() ne contient que les questions (parent_id null) de CE produit :
         // impossible de répondre dans le fil d'un autre produit.
         $question = $this->product->discussions()->findOrFail($discussionId);

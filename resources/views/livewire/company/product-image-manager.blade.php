@@ -39,6 +39,7 @@
 
     <p x-show="errorMessage" x-text="errorMessage" x-cloak class="mt-2 text-sm text-red-600"></p>
     @error('newImages.*') <p class="text-sm text-red-600 mt-2">{{ $message }}</p> @enderror
+    @error('newImages') <p class="text-sm text-red-600 mt-2">{{ $message }}</p> @enderror
 
     {{-- Modale de recadrage --}}
     <div x-show="cropModalOpen" x-cloak
