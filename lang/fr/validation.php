@@ -62,6 +62,7 @@ return [
         'content' => 'contenu',
         'rating' => 'note',
         'newQuestion' => 'question',
+        'message' => 'message',
         'acceptTerms' => 'les conditions d\'utilisation',
     ],
 ];

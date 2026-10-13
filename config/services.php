@@ -40,7 +40,7 @@ return [
         'key' => env('LOCATIONIQ_KEY'),
     ],
     'contact' => [
-        'to' => env('CONTACT_TO_EMAIL', 'lobelloromain@gmail.com'),
+        'to' => env('CONTACT_TO_EMAIL'),
     ],
 
     'slack' => [

@@ -17,7 +17,7 @@
     <div class="rounded-2xl border border-[#E2E8F0] bg-[#FAFAFF] p-6 shadow-sm">
 
         <div class="text-center">
-            <h1 class="text-2xl font-semibold text-[#1E293B]">Inscription entreprise</h1>
+            <h1 class="text-2xl font-semibold text-[#1E293B]">Inscription commerce</h1>
             <p class="text-sm text-[#333333] mt-1">Créez votre compte pour publier vos produits et services.</p>
         </div>
 
@@ -26,7 +26,7 @@
             x-on:livewire:navigate.window="navigating = true">
             <flux:input
                 wire:model="name"
-                label="Nom de l'entreprise"
+                label="Nom du commerce"
                 type="text"
                 required
                 autofocus
@@ -106,7 +106,7 @@
                 <span class="inline-flex items-center justify-center gap-2">
                     <x-spinner wire:loading wire:target="register" />
                     <x-spinner x-show="navigating" x-cloak />
-                    <span>Créer mon compte entreprise</span>
+                    <span>Créer mon compte commerce</span>
                 </span>
             </flux:button>
         </form>

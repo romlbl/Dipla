@@ -8,6 +8,8 @@ Route::middleware('guest:company')
     ->group(function () {
         Route::get('inscription', \App\Livewire\Company\Auth\Register::class)->name('register');
         Route::get('connexion', \App\Livewire\Company\Auth\Login::class)->name('login');
+        Route::get('mot-de-passe-oublie', \App\Livewire\Company\Auth\ForgotPassword::class)->name('password.request');
+        Route::get('mot-de-passe/reinitialisation/{token}', \App\Livewire\Company\Auth\ResetPassword::class)->name('password.reset');
     });
 
 Route::middleware('auth:company')

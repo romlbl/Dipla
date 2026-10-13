@@ -106,7 +106,7 @@ return [
         
         'companies' => [
             'provider' => 'companies',
-            'table' => 'password_reset_tokens',
+            'table' => 'company_password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

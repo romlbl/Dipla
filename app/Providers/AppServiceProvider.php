@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Notifications\Messages\MailMessage;
+use App\Models\Company;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -46,6 +49,26 @@ class AppServiceProvider extends ServiceProvider
             if ($event->guard === 'web') {
                 session()->put('just_logged_in', true);
             }
+        });
+
+        ResetPassword::toMailUsing(function ($notifiable, string $token) {
+            $routeName = $notifiable instanceof Company
+                ? 'company.password.reset'
+                : 'password.reset';
+
+            $url = url(route($routeName, [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ], false));
+
+            return (new MailMessage)
+                ->subject('Réinitialisation de votre mot de passe Dipla')
+                ->greeting('Bonjour,')
+                ->line('Vous avez demandez à réinitialiser votre mot de passe.')
+                ->action('Choisir un nouveau mot de passe', $url)
+                ->line('Ce lien expire dans 60 minutes.')
+                ->line("Si ce n'est pas vous, ignorez ce mail.")
+                ->salutation('L\'équipe Dipla');
         });
     }
 

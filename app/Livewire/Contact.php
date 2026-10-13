@@ -23,6 +23,7 @@ class Contact extends Component
 
     public string $name = '';
     public string $email = '';
+    public ?int $identifiant = null;
 
     #[Url(as: 'motif')]
     public string $subject = 'question';
@@ -41,6 +42,7 @@ class Contact extends Component
         if ($account) {
             $this->name = $account->name;
             $this->email = $account->email;
+            $this->identifiant = $account->id;
         }
     }
 
@@ -49,6 +51,7 @@ class Contact extends Component
         $data = $this->validate([
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'max:255'],
+            'identifiant' => ['nullable', 'integer'],
             'subject' => ['required', Rule::in(array_keys(self::SUBJECTS))],
             'message' => ['required', 'string', 'min:10', 'max:3000'],
         ]);
@@ -69,7 +72,7 @@ class Contact extends Component
 
         try {
             Mail::raw(
-                "De : {$name} <{$data['email']}>\n\n{$data['message']}",
+                "De : {$name} <{$data['email']}> (ID: {$data['identifiant']})\n\n{$data['message']}",
                 fn ($mail) => $mail
                     ->to(config('services.contact.to'))
                     ->replyTo($data['email'], $name)

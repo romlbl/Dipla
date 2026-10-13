@@ -1,6 +1,4 @@
 @push('body-top')
-    {{-- Fond Neat : fixe, couvre tout le viewport en permanence (donc aussi visible
-         au niveau du footer une fois scrollé), uniquement sur la page d'accueil. --}}
     <canvas id="neat-home-background"
             class="fixed inset-0 z-0 h-screen w-screen"
             style="pointer-events: none;"
@@ -9,7 +7,6 @@
 
 <x-layouts::guest>
     <div class="w-full z-10 max-w-md">
-        {{-- Logo Dipla centré --}}
         <div class="mb-0.5 text-center">
             <a href="{{ route('home') }}" wire:navigate class="text-4xl font-extrabold tracking-tight text-[#1E293B] md:text-5xl">
                 Dipla
@@ -38,7 +35,7 @@
                     <div class="text-center">
                         <h1 class="text-2xl font-semibold text-[#1E293B]">Connexion</h1>
                     </div>
-
+                    <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
                     <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-4" x-data="{ submitting: false }" @submit="submitting = true" @pageshow.window="submitting = false">
                         @csrf
 
@@ -64,6 +61,9 @@
                                 viewable
                                 class="rounded-xl! border-[#E2E8F0]! bg-[#FDFBF7]! focus:border-[#1E3D59]! focus:ring-[#1E3D59]/20!"
                             />
+                        </div>
+                        <div class="text-right -mt-2">
+                            <flux:link :href="route('password.request')" wire:navigate class="text-sm text-[#1E3D59]!">Mot de passe oublié ?</flux:link>
                         </div>
 
                         <flux:button variant="primary" type="submit" x-bind:disabled="submitting"

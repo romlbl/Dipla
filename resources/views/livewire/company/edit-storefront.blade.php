@@ -9,7 +9,7 @@
 
         {{-- Nom --}}
         <div>
-            <label for="storefront-name" class="block text-sm font-medium text-[#1E293B] mb-1">Nom de l'entreprise</label>
+            <label for="storefront-name" class="block text-sm font-medium text-[#1E293B] mb-1">Nom du commerce</label>
             <input type="text" id="storefront-name" wire:model="name"
                    class="w-full rounded-xl border border-[#E2E8F0] bg-[#FDFBF7] px-4 py-2.5 text-sm text-[#333333] focus:border-[#1E3D59] focus:outline-none focus:ring-2 focus:ring-[#1E3D59]/20">
             @error('name') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
