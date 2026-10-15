@@ -18,9 +18,6 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
                 </svg>
-                @if($stats['pending_count'] > 0)
-                    <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700">Action Requise</span>
-                @endif
             </div>
             <div>
                 <p class="text-2xl font-mono font-bold text-[#1E293B]">{{ $stats['pending_count'] }} question{{ $stats['pending_count'] > 1 ? 's' : '' }}</p>
@@ -33,9 +30,6 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2M12 21a9 9 0 100-18 9 9 0 000 18z" />
                 </svg>
-                @if($stats['avg_response_label'] !== '—')
-                    <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">Temps moyen</span>
-                @endif
             </div>
             <div>
                 <p class="text-2xl font-mono font-bold text-[#1E293B]">{{ $stats['avg_response_label'] }}</p>

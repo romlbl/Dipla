@@ -47,4 +47,30 @@ class ImageKitService
             $this->imageKit->deleteFile($files->result[0]->fileId);
         }
     }
+
+    /**
+     * Upload depuis une URL : ImageKit télécharge lui-même l'image.
+     */
+    public function uploadFromUrl(string $url, string $folder = 'dipla/products'): string
+    {
+        $ext = strtolower(pathinfo((string) parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION));
+        $ext = in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true) ? $ext : 'jpg';
+
+        $result = $this->imageKit->upload([
+            'file' => $url,
+            'fileName' => uniqid('img_') . '.' . $ext,
+            'folder' => $folder,
+            'useUniqueFileName' => true,
+        ]);
+
+        if (($result->result?->fileType ?? null) !== 'image') {
+            if (! empty($result->result?->fileId)) {
+                $this->imageKit->deleteFile($result->result->fileId); // pas d'image : on nettoie
+            }
+
+            throw new \RuntimeException('Le fichier n\'est pas une image.');
+        }
+
+        return $result->result->url;
+    }
 }

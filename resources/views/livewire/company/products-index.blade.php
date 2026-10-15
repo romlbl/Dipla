@@ -4,13 +4,16 @@
             <h1 class="text-2xl font-semibold text-[#1E293B]">Catalogue Produits</h1>
             <p class="text-sm text-[#333333]/70 mt-1">Gérez votre inventaire et vos offres locales.</p>
         </div>
-        <a href="{{ route('company.products.create') }}"
-           class="inline-flex items-center justify-center gap-2 rounded-full bg-[#1E3D59] px-5 py-2.5 text-sm font-semibold text-[#FDFBF7] transition hover:bg-[#16293F]">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Ajouter un produit
-        </a>
+        <div class="flex flex-col gap-2 sm:flex-row">
+            <livewire:company.catalog-import />
+            <a href="{{ route('company.products.create') }}"
+            class="inline-flex items-center justify-center gap-2 rounded-full bg-[#1E3D59] px-5 py-2.5 text-sm font-semibold text-[#FDFBF7] transition hover:bg-[#16293F]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Ajouter un produit
+            </a>
+        </div>
     </div>
 
     @if(session('success'))
