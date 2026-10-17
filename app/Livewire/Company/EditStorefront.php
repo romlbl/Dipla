@@ -16,6 +16,7 @@ class EditStorefront extends Component
 
     public string $name = '';
     public string $phone = '';
+    public string $website = '';
     public string $address = '';
     public ?float $latitude = null;
     public ?float $longitude = null;
@@ -43,6 +44,7 @@ class EditStorefront extends Component
         $this->company = $company;
         $this->name = $company->name;
         $this->phone = $company->phone ?? '';
+        $this->website = $company->website ?? '';
         $this->address = $company->address;
         $this->latitude = $company->latitude ? (float) $company->latitude : null;
         $this->longitude = $company->longitude ? (float) $company->longitude : null;
@@ -69,6 +71,10 @@ class EditStorefront extends Component
 
     public function save(): void
     {
+        $this->website = trim($this->website);
+        if ($this->website !== '' && ! preg_match('#^https?://#i', $this->website)) {
+            $this->website = 'https://'.$this->website;
+        }
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:255'],
@@ -79,6 +85,7 @@ class EditStorefront extends Component
             'newCardImage' => ['nullable', 'image', 'max:5120'],
             'newAvatarImage' => ['nullable', 'image', 'max:5120'],
             'phone' => ['nullable', 'string', 'max:30', 'regex:/^[0-9 +().\-]{6,30}$/'],
+            'website' => ['nullable', 'url:http,https', 'max:255'],
             'openingHours' => ['required', 'array'],
             'openingHours.*.closed' => ['boolean'],
             'openingHours.*.open' => ['nullable', 'date_format:H:i'],
@@ -96,6 +103,7 @@ class EditStorefront extends Component
         $data = [
             'name' => $validated['name'],
             'phone' => $validated['phone'] ?: null,
+            'website' => $validated['website'] ?: null,
             'address' => $validated['address'],
             'latitude' => $validated['latitude'],
             'longitude' => $validated['longitude'],

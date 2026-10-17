@@ -104,6 +104,9 @@
                         </svg>
                         Contacter le commerce
                     </button>
+                    <p class="mt-5 text-xs text-[#333333]/50">
+                        Dernière mise à jour le {{ $product->updated_at->timezone('Europe/Paris')->format('d/m/Y') }}
+                    </p>
 
                     <livewire:product.favorite-button :product="$product" />
                 </div>

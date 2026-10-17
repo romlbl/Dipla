@@ -61,6 +61,17 @@
             @error('phone') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
         </div>
 
+        {{-- Site web (facultatif) --}}
+        <div>
+            <label for="storefront-website" class="block text-sm font-medium text-[#1E293B] mb-1">
+                Site web <span class="font-normal text-[#333333]/50">(facultatif)</span>
+            </label>
+            <input type="text" inputmode="url" id="storefront-website" wire:model="website"
+                placeholder="ex : www.monsite.fr"
+                class="w-full rounded-xl border border-[#E2E8F0] bg-[#FDFBF7] px-4 py-2.5 text-sm text-[#333333] focus:border-[#1E3D59] focus:outline-none focus:ring-2 focus:ring-[#1E3D59]/20">
+            @error('website') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+        </div>
+
 
         {{-- Adresse avec carte --}}
         <div wire:ignore>

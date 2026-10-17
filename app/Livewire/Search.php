@@ -30,6 +30,9 @@ class Search extends Component
     #[Url]
     public ?float $maxDistance = null;
 
+    #[Url]
+    public bool $openNow = false;
+
     #[Url(as: 'lat')]
     public ?float $userLat = null;
 
@@ -40,7 +43,7 @@ class Search extends Component
 
     public function updated($property): void
     {
-        if (in_array($property, ['mode', 'q', 'type', 'maxPrice', 'maxDistance'])) {
+        if (in_array($property, ['mode', 'q', 'type', 'maxPrice', 'maxDistance', 'openNow'])) {
             $this->resetPage();
         }
     }
@@ -140,6 +143,71 @@ class Search extends Component
             ->all();
     }
 
+    /**
+     * Fusion RRF : combine le classement texte et le classement vectoriel.
+     * Score = somme de 1 / (60 + rang). Retourne les ids triés du meilleur au moins bon.
+     */
+    protected function rankedIds(string $modelClass): array
+    {
+        if (blank($this->q) || $this->mode !== 'keyword') {
+            return [];
+        }
+
+        $textIds = $modelClass::query()
+            ->search($this->q)
+            ->orderByTextRank($this->q)
+            ->limit(30)
+            ->pluck('id')
+            ->all();
+
+        $scores = [];
+
+        foreach ([$textIds, $this->semanticIds($modelClass)] as $list) {
+            foreach ($list as $rank => $id) {
+                $scores[$id] = ($scores[$id] ?? 0) + 1 / (60 + $rank + 1);
+            }
+        }
+
+        arsort($scores);
+
+        return $this->rerankIds($modelClass, array_map('intval', array_keys($scores)));
+    }
+
+    /**
+     * Rerank des 20 meilleurs candidats RRF.
+     * Échec API → on garde l'ordre RRF.
+     */
+    protected function rerankIds(string $modelClass, array $ids): array
+    {
+        $top = array_slice($ids, 0, 20);
+
+        if (count($top) < 2) {
+            return $ids;
+        }
+
+        $models = $modelClass::query()->whereIn('id', $top)->get()->keyBy('id');
+        $top = array_values(array_filter($top, fn ($id) => $models->has($id)));
+        $texts = array_map(fn ($id) => $this->rerankText($models[$id]), $top);
+
+        $order = app(EmbeddingService::class)->rerank($this->q, $texts);
+
+        if (!$order) {
+            return $ids;
+        }
+
+        $reranked = array_map(fn ($index) => $top[$index], $order);
+
+        // Les ids rerankés d'abord, le reste (après le top 20) ensuite.
+        return array_values(array_unique(array_merge($reranked, $ids)));
+    }
+
+    protected function rerankText(Product|Company $model): string
+    {
+        return $model instanceof Product
+            ? trim($model->title.'. '.$model->keywords.'. '.$model->description)
+            : trim($model->name.'. '.$model->description);
+    }
+
     protected function applyModeScopes($query, string $table, array $semanticIds = [])
     {
         switch ($this->mode) {
@@ -171,6 +239,13 @@ class Search extends Component
                     }
                 });
 
+                // Pertinence d'abord (RRF) ; distance / date servent de départage.
+                if (!empty($semanticIds)) {
+                    $query->orderByRaw(
+                        'array_position(ARRAY['.implode(',', $semanticIds).']::bigint[], '.$table.'.id) ASC NULLS LAST'
+                    );
+                }
+
                 if ($this->userLat && $this->userLng) {
                     $query->nearby($this->userLat, $this->userLng, $this->maxDistance ?? 200);
                     $query->orderBy('distance');
@@ -187,7 +262,7 @@ class Search extends Component
     {
         $query = Product::query()->ofType($this->type ?: null)->maxPrice($this->maxPrice);
 
-        return $this->applyModeScopes($query, 'products', $this->semanticIds(Product::class))
+        return $this->applyModeScopes($query, 'products', $this->rankedIds(Product::class))
             ->with(['images', 'company', 'reviews'])
             ->paginate(10, ['*'], 'productsPage');
     }
@@ -195,6 +270,7 @@ class Search extends Component
     protected function searchCompanies()
     {
         return $this->applyModeScopes(Company::query(), 'companies', $this->semanticIds(Company::class))
+            ->when($this->openNow && $this->type === 'commerce', fn ($q) => $q->openNow())
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->paginate(10, ['*'], 'companiesPage');

@@ -120,6 +120,21 @@ class Product extends Model
     }
 
     /**
+     * Trie par pertinence texte (full-text + fautes de frappe).
+     * À utiliser après search().
+     */
+    public function scopeOrderByTextRank(Builder $query, string $term): Builder
+    {
+        return $query->orderByRaw(
+            "GREATEST(
+                ts_rank(search_vector, websearch_to_tsquery('french', ?)),
+                similarity(unaccent(title), unaccent(?))
+            ) DESC",
+            [$term, $term]
+        );
+    }
+
+    /**
      * Filtre par distance (km) depuis un point donné, formule de Haversine.
      * Ajoute aussi une colonne calculée "distance" utilisable pour trier.
      */

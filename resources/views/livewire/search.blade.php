@@ -143,6 +143,14 @@
                         </div>
                         <div class="mb-4"></div>
 
+                        @if($type === 'commerce')
+                            <label class="flex cursor-pointer items-center gap-2.5 text-sm text-[#1E293B]">
+                                <input type="checkbox" wire:model.live="openNow"
+                                    class="h-4 w-4 cursor-pointer rounded border-[#E2E8F0] accent-[#1E3D59]">
+                                Ouvert maintenant
+                            </label>
+                        @endif
+
                         {{-- Distance max --}}
                         @if($mode !== 'nearby')
                             <div x-data="{ value: @js($maxDistance) }" class="border-t border-[#E2E8F0] pt-5">
@@ -178,10 +186,10 @@
         {{-- Résultats --}}
         <div class="flex-1 min-w-0 flex flex-col gap-10 transition-opacity"
             wire:loading.class="opacity-50"
-            wire:target="q,type,maxPrice,maxDistance,mode,setMode,setUserLocation,gotoPage,nextPage,previousPage">
+            wire:target="q,type,maxPrice,maxDistance,openNow,mode,setMode,setUserLocation,gotoPage,nextPage,previousPage">
 
             <div wire:loading.flex
-                wire:target="q,type,maxPrice,maxDistance,mode,setMode,setUserLocation,gotoPage,nextPage,previousPage"
+                wire:target="q,type,maxPrice,maxDistance,openNow,mode,setMode,setUserLocation,gotoPage,nextPage,previousPage"
                 role="status" class="items-center gap-2 text-sm text-[#333333]/60">
                 <x-spinner class="text-[#1E3D59]" /> Recherche en cours…
             </div>

@@ -12,6 +12,15 @@
         $companiesCount = \App\Models\Company::count();
         $productsCount = \App\Models\Product::count();
 
+
+        // Commerces du jour
+        $commerces = \App\Models\Company::with(['reviews'])
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->latest()
+            ->take(8)
+            ->get();
+
         // Nouveau : les publications les plus récentes
         $newProducts = \App\Models\Product::with(['images', 'company', 'reviews'])
             ->latest()
@@ -26,15 +35,25 @@
             ->take(8)
             ->get();
 
-        // À proximité : sélection aléatoire en attendant l'activation de la position
-        // (le calcul de distance réel se fait sur /recherche?mode=nearby via la géoloc du navigateur)
-        $nearbyProducts = \App\Models\Product::with(['images', 'company', 'reviews'])
-            ->whereNotNull('latitude')
-            ->inRandomOrder()
-            ->take(8)
-            ->get();
+        // À proximité : tri réel pour les utilisateurs dont la position est connue.
+        $user = auth()->user();
+        $nearbyQuery = \App\Models\Product::with(['images', 'company', 'reviews']);
 
-        $categories = ['Artisans', 'Fleurs', 'Librairies', 'Bijoux'];
+        if ($user?->latitude !== null && $user?->longitude !== null) {
+            $nearbyProducts = $nearbyQuery
+                ->nearby((float) $user->latitude, (float) $user->longitude)
+                ->orderBy('distance')
+                ->take(8)
+                ->get();
+        } else {
+            // Sans position, le navigateur doit d'abord être autorisé à la partager.
+            $nearbyProducts = $nearbyQuery
+                ->whereNotNull('latitude')
+                ->inRandomOrder()
+                ->take(8)
+                ->get();
+        }
+
     @endphp
 
     {{-- Hero --}}
@@ -80,48 +99,50 @@
             </div>
         </form>
 
-        {{-- Filtres rapides (cachés sur mobile) --}}
-        <div class="hidden md:flex flex-wrap justify-center gap-2">
-            @foreach($categories as $category)
-                <a href="{{ route('search', ['q' => $category]) }}" wire:navigate
-                   class="rounded-full bg-[#4A3B5C]/10 px-4 py-2 text-xs font-semibold text-[#4A3B5C] transition hover:bg-[#4A3B5C]/20">
-                    {{ $category }}
-                </a>
-            @endforeach
-        </div>
-
         <p class="font-sans text-xs text-[#333333]/50">
             {{ $companiesCount }} commerces · {{ $productsCount }} produits
         </p>
         </div>
     </section>
 
-    {{-- Nouveau --}}
-    @if($newProducts->isNotEmpty())
+    {{-- Commerce --}}
+    @if($commerces->isNotEmpty())
         <section class="space-y-4 py-6">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold text-[#1E293B] md:text-2xl">Nouveau</h2>
-                <a href="{{ route('search') }}" wire:navigate class="font-sans text-xs text-[#4A3B5C] hover:underline">
-                    Tout voir
-                </a>
+                <h2 class="text-xl font-bold text-[#1E293B] md:text-2xl">Commerces du jour</h2>
             </div>
             <div class="hide-scrollbar flex snap-x gap-4 overflow-x-auto pb-2">
-                @foreach($newProducts as $product)
-                    @include('partials.product-card', ['product' => $product])
-                @endforeach
-            </div>
-        </section>
-    @endif
+                @foreach($commerces as $commerce)
+                    <a href="{{ route('company.storefront', $commerce) }}" wire:navigate
+                        class="group flex w-[calc(50%-0.5rem)] min-w-[calc(50%-0.5rem)] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-[#E2E8F0] bg-[#FAFAFF] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md sm:w-[240px] sm:min-w-[240px]">
+                        <div class="relative aspect-[4/3] w-full bg-[#E2E8F0]">
+                            @php($cardImage = $commerce->card_image_url ?? $commerce->cover_image_url)
+                            @if($cardImage)
+                                <img src="{{ $cardImage }}" alt="{{ $commerce->name }}"
+                                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                            @else
+                                <div class="flex h-full w-full items-center justify-center text-sm text-[#333333]/40">
+                                    Pas d'image
+                                </div>
+                            @endif
+                            @if($commerce->reviews_count > 0)
+                                <span class="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-[#FDFBF7]/90 px-2.5 py-1 text-xs font-semibold text-[#1E293B] backdrop-blur-sm">
+                                    <span class="text-[#4A3B5C]">★</span> {{ number_format($commerce->reviews_avg_rating, 1) }}
+                                </span>
+                            @endif
+                        </div>
 
-    {{-- Recommandation --}}
-    @if($recommendedProducts->isNotEmpty())
-        <section class="space-y-4 border-t border-[#E2E8F0] py-6">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold text-[#1E293B] md:text-2xl">Recommandation</h2>
-            </div>
-            <div class="hide-scrollbar flex snap-x gap-4 overflow-x-auto pb-2">
-                @foreach($recommendedProducts as $product)
-                    @include('partials.product-card', ['product' => $product])
+                        <div class="flex flex-1 flex-col p-4">
+                            <h3 class="font-semibold text-[#1E293B] line-clamp-2">{{ $commerce->name }}</h3>
+                            <p class="mt-1 text-xs text-[#333333]/60 line-clamp-2">{{ $commerce->address }}</p>
+
+                            @if(isset($commerce->distance))
+                                <p class="mt-auto pt-3 text-xs font-mono text-[#333333]/60">
+                                    {{ number_format($commerce->distance, 1) }} km
+                                </p>
+                            @endif
+                        </div>
+                    </a>
                 @endforeach
             </div>
         </section>
@@ -143,4 +164,36 @@
             </div>
         </section>
     @endif
+
+    {{-- Recommandation --}}
+    @if($recommendedProducts->isNotEmpty())
+        <section class="space-y-4 border-t border-[#E2E8F0] py-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-[#1E293B] md:text-2xl">Recommandation</h2>
+            </div>
+            <div class="hide-scrollbar flex snap-x gap-4 overflow-x-auto pb-2">
+                @foreach($recommendedProducts as $product)
+                    @include('partials.product-card', ['product' => $product])
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    {{-- Nouveau --}}
+    @if($newProducts->isNotEmpty())
+        <section class="space-y-4 py-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-[#1E293B] md:text-2xl">Nouveau</h2>
+                <a href="{{ route('search') }}" wire:navigate class="font-sans text-xs text-[#4A3B5C] hover:underline">
+                    Tout voir
+                </a>
+            </div>
+            <div class="hide-scrollbar flex snap-x gap-4 overflow-x-auto pb-2">
+                @foreach($newProducts as $product)
+                    @include('partials.product-card', ['product' => $product])
+                @endforeach
+            </div>
+        </section>
+    @endif
+
 </x-layouts::public>

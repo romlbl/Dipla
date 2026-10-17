@@ -16,6 +16,7 @@ class Company extends Authenticatable
         'name',
         'email',
         'phone',
+        'website',
         'password',
         'address',
         'latitude',
@@ -118,6 +119,15 @@ class Company extends Authenticatable
         });
     }
 
+    /**
+     * Trie par pertinence texte sur le nom.
+     * À utiliser après search().
+     */
+    public function scopeOrderByTextRank(\Illuminate\Database\Eloquent\Builder $query, string $term): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->orderByRaw("similarity(unaccent(name), unaccent(?)) DESC", [$term]);
+    }
+
     public function scopeNearby(\Illuminate\Database\Eloquent\Builder $query, float $lat, float $lng, ?float $radiusKm = null): \Illuminate\Database\Eloquent\Builder
     {
         $haversine = "(
@@ -141,6 +151,24 @@ class Company extends Authenticatable
         return $query;
     }
 
+    public function scopeOpenNow(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        $now = now('Europe/Paris');
+        $day = strtolower($now->format('D')); // mon, tue... (lettres seules, sûr à injecter)
+        $time = $now->format('H:i');
+        $d = "(opening_hours::jsonb->'{$day}')";
+
+        return $query
+            ->whereNotNull('opening_hours')
+            ->whereRaw("COALESCE(({$d}->>'closed')::boolean, true) = false")
+            ->whereRaw("{$d}->>'open' <= ?", [$time])
+            ->whereRaw("{$d}->>'close' >= ?", [$time])
+            // Pause : fermé entre début et fin de pause
+            ->whereRaw(
+                "NOT (COALESCE(({$d}->>'has_break')::boolean, false) AND {$d}->>'break_start' <= ? AND {$d}->>'break_end' > ?)",
+                [$time, $time]
+            );
+    }
 
     public function scopeSemantic(\Illuminate\Database\Eloquent\Builder $query, ?array $vector, float $maxDistance = 0.55): \Illuminate\Database\Eloquent\Builder
     {

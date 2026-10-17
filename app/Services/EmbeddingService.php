@@ -42,6 +42,48 @@ class EmbeddingService
         );
     }
 
+    /**
+     * Rerank : note chaque texte face à la requête.
+     * Retourne les index des textes, du meilleur au moins bon (null si échec).
+     */
+    public function rerank(string $query, array $texts): ?array
+    {
+        if (count($texts) < 2) {
+            return null;
+        }
+
+        $key = 'rerank:'.md5(mb_strtolower(trim($query)).'|'.json_encode($texts));
+
+        return Cache::remember($key, now()->addHour(), function () use ($query, $texts) {
+            try {
+                $response = Http::withToken(config('services.cloudflare.token'))
+                    ->timeout(8)
+                    ->post($this->endpoint('@cf/baai/bge-reranker-base'), [
+                        'query' => $query,
+                        'top_k' => count($texts),
+                        'contexts' => array_map(
+                            fn ($text) => ['text' => mb_substr($text, 0, 500)],
+                            $texts
+                        ),
+                    ]);
+
+                if (!$response->successful()) {
+                    Log::warning('Rerank Cloudflare échoué', ['status' => $response->status()]);
+                    return null;
+                }
+
+                $items = $response->json('result.response') ?? [];
+
+                usort($items, fn ($a, $b) => $b['score'] <=> $a['score']);
+
+                return array_map(fn ($item) => (int) $item['id'], $items) ?: null;
+            } catch (\Throwable $e) {
+                Log::warning('Exception rerank', ['message' => $e->getMessage()]);
+                return null;
+            }
+        });
+    }
+
     protected function embedText(string $text): ?array
     {
         try {

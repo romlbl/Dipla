@@ -175,6 +175,23 @@
                     </div>
                 @endif
 
+                @if($company->website)
+                <div class="flex items-start gap-3">
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1E3D59]/10 text-[#1E3D59]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3M3.6 9h16.8M3.6 15h16.8" />
+                        </svg>
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="text-sm font-medium text-[#1E293B]">Site web</h3>
+                        <a href="{{ $company->website }}" target="_blank" rel="noopener noreferrer nofollow"
+                        class="mt-0.5 block break-all text-sm text-[#333333]/70 transition hover:text-[#1E3D59]">
+                            {{ preg_replace('#^www\.#i', '', parse_url($company->website, PHP_URL_HOST) ?: $company->website) }}
+                        </a>
+                    </div>
+                </div>
+            @endif
+
                 @if($reviewsCount > 0)
                     <div class="flex items-start gap-3">
                         <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1E3D59]/10 text-amber-500 leading-none text-lg">★</div>
@@ -184,7 +201,9 @@
                         </div>
                     </div>
                 @endif
-
+                <p class="text-xs text-[#333333]/50">
+                    Dernière mise à jour le {{ $company->updated_at->timezone('Europe/Paris')->format('d/m/Y') }}
+                </p>
             </div>
         </div>
     </section>
