@@ -40,7 +40,7 @@ Des comptes de démonstration ont été créés pour vous permettre d'explorer l
 *(Remplacer `<N>` par le numéro de compte souhaité)*
 
 Connectez-vous avec ces identifiants pour accéder aux différents tableaux de bord.
-Lien vers Dipla : https://diplav2.onrender.com
+Lien vers Dipla : https://dipla.me
 
 ## Fonctionnalités
 
