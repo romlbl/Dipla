@@ -1,4 +1,4 @@
-# Dipla — Plateforme de découverte de commerces locaux
+# Dipla - Plateforme de découverte de commerces locaux
 
 Dipla est une plateforme qui permet à des particuliers de trouver des produits et services proposés par des commerces de proximité, avec une logique de recherche géolocalisée (distance, itinéraire) plutôt qu'un simple annuaire.
 
@@ -80,7 +80,7 @@ Lien vers Dipla : https://diplav2.onrender.com
 Dans un soucis de rapidité et d'efficacité ce projet a été développé avec l'aide d'un assistant IA (Claude, d'Anthropic) utilisé comme outil de génération de code assistée. **Le site n'a pas été créé « à l'aveugle » en déléguant tout à l'IA.** :
 
 - L'IA a été utilisée pour générer des blocs de code ciblés : composants Livewire, migrations, méthodes de modèles Eloquent, requêtes SQL, scripts Alpine.js, gabarits Blade, configuration Docker, etc.
-- **Chaque bloc de code généré a été relu, compris et vérifié manuellement** avant d'être intégré au projet — aucun code n'a été copié-collé aveuglément. Les choix d'architecture ont été discutés et validés au fil de l'eau plutôt que délégués intégralement.
+- **Chaque bloc de code généré a été relu, compris et vérifié manuellement** avant d'être intégré au projet - aucun code n'a été copié-collé aveuglément. Les choix d'architecture ont été discutés et validés au fil de l'eau plutôt que délégués intégralement.
 
 L'objectif de cette mention est la transparence : ce dépôt reflète un travail de développement personnel assisté par IA, pas un projet généré automatiquement sans supervision.
 
