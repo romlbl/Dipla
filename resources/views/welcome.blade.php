@@ -115,7 +115,7 @@
                 @foreach($commerces as $commerce)
                     <a href="{{ route('company.storefront', $commerce) }}" wire:navigate
                         class="group flex w-[calc(50%-0.5rem)] min-w-[calc(50%-0.5rem)] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-[#E2E8F0] bg-[#FAFAFF] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md sm:w-[240px] sm:min-w-[240px]">
-                        <div class="relative aspect-[4/3] w-full bg-[#E2E8F0]">
+                        <div class="relative aspect-[2/3] w-full bg-[#E2E8F0]">
                             @php($cardImage = $commerce->card_image_url ?? $commerce->cover_image_url)
                             @if($cardImage)
                                 <img src="{{ $cardImage }}" alt="{{ $commerce->name }}"
