@@ -28,8 +28,6 @@ Dipla est **entièrement gratuit**, aussi bien pour les particuliers que pour le
 
 ## Accès a Dipla
 
-> **Remarque :** Le site est hébergé sur l'offre gratuite de Render. En raison de la mise en veille automatique après une période d'inactivité, le premier chargement peut prendre entre 30 secondes et 1 minute.
-
 Des comptes de démonstration ont été créés pour vous permettre d'explorer l'ensemble des fonctionnalités de Dipla :
 
 | Type de compte | Adresse e-mail | Mot de passe |
