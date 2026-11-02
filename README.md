@@ -1,3 +1,4 @@
+ [Lire ce README en français](README.fr.md)
 # Dipla - Local business discovery platform
 
 Dipla is a platform that lets individuals find products and services offered by local businesses, using a geolocated search approach (distance, route) rather than a simple directory.
